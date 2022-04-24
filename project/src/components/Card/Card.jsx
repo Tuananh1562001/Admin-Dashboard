@@ -1,47 +1,118 @@
-import React, { useState } from 'react'
-import { AnimateSharedLayout} from "framer-motion"
-import { CircularProgressbar } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
-import "./Card.css"
+import React, { useState } from "react";
+import { motion, AnimateSharedLayout } from "framer-motion";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import {AiOutlineClose} from "react-icons/ai"
+import  Chart from "react-apexcharts"
+import "./Card.css";
+
+
 function Card(props) {
-    const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false);
   return (
     <AnimateSharedLayout>
-        {
-            expanded ? (
-                'Expanded'
-            ) : <CompactCard param= {props} />
-        }
+      {expanded ? (
+        <ExpandedCard param={props} setExpanded={() => setExpanded(false)} />
+      ) : (
+        <CompactCard param={props} setExpanded={() => setExpanded(true)} />
+      )}
     </AnimateSharedLayout>
-  )
+  );
 }
 
 // CompactCard
-function CompactCard({param}) {
-    console.log(param)
-    const Png = param.png
-    return (
-        <div className='CompactCard' style={{
-            background: param.color.backGround,
-            boxShadow: param.color.boxShadow
-        }}>
-            <div className='radialBar'>
-                <CircularProgressbar 
-                    value={param.barValue}  
-                    text={`${param.barValue}%`}  
-                />
-                <span>{param.title}</span>
+function CompactCard({ param,setExpanded} ) {
+  // console.log(param)
+  const Png = param.png;
+  return (
+    <motion.div
+      className="CompactCard"
+      style={{
+        background: param.color.backGround,
+        boxShadow: param.color.boxShadow,
+      }}
+      onClick={setExpanded}
+    >
+      <div className="radialBar">
+        <CircularProgressbar
+          value={param.barValue}
+          text={`${param.barValue}%`}
+        />
+        <span>{param.title}</span>
+      </div>
+      <div className="detail">
+        <Png />
+        <span>${param.value}</span>
+        <span>Last 24 hours</span>
+      </div>
+    </motion.div>
+  );
+}
+function ExpandedCard({param, setExpanded}) {
+    const data = {
+        options: {
+            chart: {
+                type: "area",
+                height: "auto",
+            },
+            dropShadow: {
+                enabled: false,
+                enabledOnSeries: undefined,
+                top: 0,
+                left: 0,
+                blur: 3,
+                color: "#000",
+                opacity: 0.35,
+            },
+            fill: {
+              colors: ["#fff"],
+              type: "gradient",
+            },
+            dataLabels: {
+              enabled: false,
+            },
+            stroke: {
+              curve: "smooth",
+              colors: ["#fff"]
+            },
+            tooltip: {
+              x: {
+                format: "dd/MM/yy HH:mm",
+              },
+            },
+            grid: {
+              show: true,
+            },
+            xaxis: {
+              type: "datetime",
+              categories: [
+                "2018-09-19T00:00:00.000Z",
+                "2018-09-19T01:30:00.000Z",
+                "2018-09-19T02:30:00.000Z",
+                "2018-09-19T03:30:00.000Z",
+                "2018-09-19T04:30:00.000Z",
+                "2018-09-19T05:30:00.000Z",
+                "2018-09-19T06:30:00.000Z",
+              ] 
+            },
+        }
+    }
+    return(
+        <motion.div className="ExpandedCard"
+            style={{
+                background: param.color.backGround,
+                boxShadow: param.color.boxShadow
+            }}
+            layoutId="expandableCard"
+        >
+            <div><AiOutlineClose onClick={setExpanded}/></div>
+            <span>{param.title}</span>
+            <div className="chartContainer">
+                <Chart series={param.series} type='area' options={data.options}/>
             </div>
-            <div className='detail'>
-                <Png />
-                <span>${param.value}</span>
-                <span>Last 24 hours</span>
-            </div>
-        </div>
+            <span>Last 24 hours</span>
+        </motion.div>
     )
 }
-// function ExpandedCard() {
 
-// }
-
-export default Card
+export default Card;
