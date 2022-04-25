@@ -105,7 +105,7 @@ function ExpandedCard({param, setExpanded}) {
             }}
             layoutId="expandableCard"
         >
-            <div><AiOutlineClose onClick={setExpanded}/></div>
+            <div style={{alignSelf: 'flex-end', cursor: 'pointer', color: 'white', fontSize: '2rem'}}><AiOutlineClose onClick={setExpanded}/></div>
             <span>{param.title}</span>
             <div className="chartContainer">
                 <Chart series={param.series} type='area' options={data.options}/>
